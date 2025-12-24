@@ -15,12 +15,23 @@ const distanceRoutes = require("./routes/distanceRoutes");
 connectDB();
 
 // middlewares
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-  })
-);
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://fooddonation-7lce77jch-syam-satyanarayana-pillis-projects.vercel.app",
+  "https://fooddonation-qjkwbctn2-syam-satyanarayana-pillis-projects.vercel.app"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 
 app.use(express.json());
 app.use("/api/auth", authRoutes);
