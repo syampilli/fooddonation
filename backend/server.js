@@ -15,7 +15,13 @@ const distanceRoutes = require("./routes/distanceRoutes");
 connectDB();
 
 // middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoutes);

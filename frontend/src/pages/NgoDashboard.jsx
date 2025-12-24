@@ -187,7 +187,7 @@ export default function NgoDashboard() {
                     {/* 🖼️ Food Image */}
                     {d.foodImage && (
                       <img
-                        src={`http://localhost:5000${d.foodImage}`}
+                         src={`https://fooddonation-1-fpe0.onrender.com${d.foodImage}`}
                         alt="Food"
                         className="w-full max-w-sm h-48 object-cover rounded-lg mt-3"
                       />
