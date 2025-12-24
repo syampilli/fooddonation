@@ -3,38 +3,56 @@ const cors = require("cors");
 require("dotenv").config();
 
 const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const donationRoutes = require("./routes/donationRoutes");
+const distanceRoutes = require("./routes/distanceRoutes");
+const testRoutes = require("./routes/testRoutes");
+const path = require("path");
 
 const app = express();
-const authRoutes = require("./routes/authRoutes");
-const testRoutes = require("./routes/testRoutes");
-const donationRoutes = require("./routes/donationRoutes");
-const path = require("path");
-const distanceRoutes = require("./routes/distanceRoutes");
 
-// connect database
+// connect DB
 connectDB();
 
-// middlewares
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://fooddonation-eta.vercel.app",
-    "https://fooddonation-7lce77jch-syam-satyanarayana-pillis-projects.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+// 🔥 SMART CORS (handles ALL vercel preview URLs)
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (Postman, mobile apps)
+      if (!origin) return callback(null, true);
+
+      // allow localhost
+      if (origin.startsWith("http://localhost")) {
+        return callback(null, true);
+      }
+
+      // allow all vercel deployments
+      if (origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// 🔥 handle preflight
+app.options("*", cors());
 
 app.use(express.json());
-app.use("/api/auth", require("./routes/authRoutes"));
 
-app.use("/api/test", testRoutes);
+// routes
+app.use("/api/auth", authRoutes);
 app.use("/api/donations", donationRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/api/distance", require("./routes/distanceRoutes"));
+app.use("/api/distance", distanceRoutes);
+app.use("/api/test", testRoutes);
 
-// test route
+// static uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.get("/", (req, res) => {
   res.send("Food Donation Backend Running 🚀");
 });
