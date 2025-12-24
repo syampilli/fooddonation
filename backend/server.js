@@ -15,29 +15,21 @@ const app = express();
 connectDB();
 
 // 🔥 SMART CORS (handles ALL vercel preview URLs)
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // allow requests with no origin (Postman, mobile apps)
-      if (!origin) return callback(null, true);
+// middlewares
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (origin.startsWith("http://localhost")) return callback(null, true);
+    if (origin.endsWith(".vercel.app")) return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
-      // allow localhost
-      if (origin.startsWith("http://localhost")) {
-        return callback(null, true);
-      }
+app.use(express.json());
 
-      // allow all vercel deployments
-      if (origin.endsWith(".vercel.app")) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
 
 // 🔥 handle preflight
 app.options("*", cors());
