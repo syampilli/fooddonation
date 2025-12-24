@@ -32,7 +32,6 @@ app.use(express.json());
 
 
 // 🔥 handle preflight
-app.options("*", cors());
 
 app.use(express.json());
 
