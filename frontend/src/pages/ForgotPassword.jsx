@@ -5,15 +5,16 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [msg, setMsg] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await API.post("/auth/forgot-password", { email });
-      setMsg(res.data.message);
-    } catch (err) {
-      setMsg("Email not registered");
-    }
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await API.post("/auth/forgot-password", { email });
+    setMsg(res.data.message);
+  } catch (err) {
+    setMsg(err.response?.data?.message || "Email not registered");
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-400 to-blue-500">
