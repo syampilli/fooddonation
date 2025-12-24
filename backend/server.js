@@ -33,7 +33,7 @@ app.use(express.json());
 
 // 🔥 handle preflight
 
-app.use(express.json());
+
 
 // routes
 app.use("/api/auth", authRoutes);
